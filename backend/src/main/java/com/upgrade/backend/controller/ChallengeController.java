@@ -1,5 +1,7 @@
 package com.upgrade.backend.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,5 +47,11 @@ public class ChallengeController {
     public ResponseEntity<Void> deleteChallenge(@PathVariable Long id) {
         challengeService.deleteChallenge(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Challenge>> getActiveChallengesByUser(@PathVariable Long userId) {
+        List<Challenge> challenges = challengeService.getActiveChallengesByUser(userId);
+        return ResponseEntity.ok(challenges);
     }
 }

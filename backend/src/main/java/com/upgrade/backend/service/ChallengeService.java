@@ -1,5 +1,7 @@
 package com.upgrade.backend.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,5 +67,9 @@ public class ChallengeService {
         }
 
         challengeRepository.delete(challenge);
+    }
+
+    public List<Challenge> getActiveChallengesByUser(Long userId) {
+        return challengeRepository.findByUserIdAndFinishedFalse(userId);
     }
 }
