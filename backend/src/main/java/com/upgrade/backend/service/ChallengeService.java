@@ -31,4 +31,39 @@ public class ChallengeService {
         
         return challengeRepository.save(challenge);
     }
+
+    public Challenge getChallenge(Long id) {
+        return challengeRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Desafio não encontrado"));
+    }
+
+    @Transactional
+    public Challenge updateChallenge(Long id, ChallengeRequest request) {
+        Challenge challenge = getChallenge(id);
+        
+        User currentUser = userService.getCurrentUser();
+        if (!challenge.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Não autorizado a atualizar este desafio");
+        }
+
+        challenge.setTitle(request.getTitle());
+        challenge.setDescription(request.getDescription());
+        challenge.setType(request.getType());
+        challenge.setDurationInDays(request.getDurationInDays());
+        challenge.setStartDate(request.getStartDate());
+        
+        return challengeRepository.save(challenge);
+    }
+
+    @Transactional
+    public void deleteChallenge(Long id) {
+        Challenge challenge = getChallenge(id);
+        
+        User currentUser = userService.getCurrentUser();
+        if (!challenge.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Não autorizado a deletar este desafio");
+        }
+
+        challengeRepository.delete(challenge);
+    }
 }
