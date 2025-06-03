@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.upgrade.backend.model.User;
 import com.upgrade.backend.repository.UserRepository;
+import com.upgrade.backend.dto.UserStatsResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,5 +26,14 @@ public class UserService {
     public User getUser(Long id) {
         return userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    }
+
+    @Transactional(readOnly = true)
+    public UserStatsResponse getUserStats(Long id) {
+        User user = getUser(id);
+        return UserStatsResponse.builder()
+                .level(user.getLevel())
+                .points(user.getPoints())
+                .build();
     }
 }

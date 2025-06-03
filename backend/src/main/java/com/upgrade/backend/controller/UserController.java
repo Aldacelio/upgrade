@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.upgrade.backend.dto.UserStatsResponse;
 import com.upgrade.backend.model.User;
 import com.upgrade.backend.service.UserService;
 
@@ -21,5 +22,10 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUser(id));
+    }
+
+    @GetMapping("/{id}/stats")
+    public ResponseEntity<UserStatsResponse> getUserStats(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserStats(id));
     }
 }
