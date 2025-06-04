@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.upgrade.backend.dto.UserResponse;
 import com.upgrade.backend.dto.UserStatsResponse;
 import com.upgrade.backend.model.Challenge;
-import com.upgrade.backend.model.User;
 import com.upgrade.backend.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
 

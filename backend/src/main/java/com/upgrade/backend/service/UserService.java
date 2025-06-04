@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.upgrade.backend.dto.UserResponse;
 import com.upgrade.backend.dto.UserStatsResponse;
 import com.upgrade.backend.model.Challenge;
 import com.upgrade.backend.model.User;
@@ -28,9 +29,17 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public User getUser(Long id) {
-        return userRepository.findById(id)
+    public UserResponse getUser(Long id) {
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            
+        return UserResponse.builder()
+            .id(user.getId())
+            .username(user.getUsername())
+            .email(user.getEmail())
+            .level(user.getLevel())
+            .points(user.getPoints())
+            .build();
     }
 
     @Transactional(readOnly = true)
