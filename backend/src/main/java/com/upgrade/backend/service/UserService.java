@@ -44,7 +44,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserStatsResponse getUserStats(Long id) {
-        User user = getUser(id);
+        UserResponse user = getUser(id);
         return UserStatsResponse.builder()
                 .level(user.getLevel())
                 .points(user.getPoints())
