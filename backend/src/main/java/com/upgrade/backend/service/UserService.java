@@ -1,15 +1,17 @@
 package com.upgrade.backend.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.upgrade.backend.dto.DailyProgressHistoryResponse;
 import com.upgrade.backend.dto.UserStatsResponse;
-import com.upgrade.backend.model.Challenge;
+import com.upgrade.backend.model.DailyProgress;
 import com.upgrade.backend.model.User;
-import com.upgrade.backend.repository.ChallengeRepository;
+import com.upgrade.backend.repository.DailyProgressRepository;
 import com.upgrade.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ChallengeRepository challengeRepository;
+    private final DailyProgressRepository dailyProgressRepository;
 
     public User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -43,8 +45,23 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<Challenge> getUserChallengeHistory(Long userId) {
-        getUser(userId);
-        return challengeRepository.findByUserIdAndFinishedTrue(userId);
+    public List<DailyProgressHistoryResponse> getUserProgressHistory(Long userId) {
+        getUser(userId); // Verifica se o usuário existe
+        
+        List<DailyProgress> progressList = dailyProgressRepository.findUserProgressHistory(userId);
+        
+        return progressList.stream()
+                .map(this::mapToHistoryResponse)
+                .collect(Collectors.toList());
+    }
+    
+    private DailyProgressHistoryResponse mapToHistoryResponse(DailyProgress progress) {
+        String status = progress.isCompleted() ? "COMPLETADO" : "VENCIDO";
+        
+        return DailyProgressHistoryResponse.builder()
+                .date(progress.getDate())
+                .status(status)
+                .challengeId(progress.getChallenge().getId())
+                .build();
     }
 }
