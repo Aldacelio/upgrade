@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.upgrade.backend.dto.ChallengeRequest;
+import com.upgrade.backend.dto.ChallengeResponse;
 import com.upgrade.backend.model.Challenge;
 import com.upgrade.backend.service.ChallengeService;
 
@@ -26,9 +27,9 @@ public class ChallengeController {
     private final ChallengeService challengeService;
 
     @PostMapping
-    public ResponseEntity<Challenge> createChallenge(@RequestBody ChallengeRequest request) {
-        Challenge newChallenge = challengeService.createChallenge(request);
-        return ResponseEntity.ok(newChallenge);
+    public ResponseEntity<ChallengeResponse> createChallenge(@RequestBody ChallengeRequest request) {
+        ChallengeResponse newChallenge = challengeService.createChallenge(request);
+        return ResponseEntity.status(201).body(newChallenge);
     }
 
     @GetMapping("/{id}")

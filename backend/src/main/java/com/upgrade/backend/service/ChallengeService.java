@@ -1,12 +1,15 @@
 package com.upgrade.backend.service;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.upgrade.backend.dto.ChallengeRequest;
+import com.upgrade.backend.dto.ChallengeResponse;
 import com.upgrade.backend.model.Challenge;
+import com.upgrade.backend.model.DailyProgress;
 import com.upgrade.backend.model.User;
 import com.upgrade.backend.repository.ChallengeRepository;
 
@@ -20,7 +23,7 @@ public class ChallengeService {
     private final UserService userService;
 
     @Transactional
-    public Challenge createChallenge(ChallengeRequest request) {
+    public ChallengeResponse createChallenge(ChallengeRequest request) {
         User currentUser = userService.getCurrentUser();
         
         Challenge challenge = new Challenge();
@@ -31,7 +34,18 @@ public class ChallengeService {
         challenge.setStartDate(request.getStartDate());
         challenge.setUser(currentUser);
         
-        return challengeRepository.save(challenge);
+        List<DailyProgress> progressList = new ArrayList<>();
+        for (int i = 0; i < request.getDurationInDays(); i++) {
+            DailyProgress dailyProgress = new DailyProgress();
+            dailyProgress.setDate(request.getStartDate().plusDays(i));
+            dailyProgress.setCompleted(false);
+            dailyProgress.setChallenge(challenge);
+            progressList.add(dailyProgress);
+        }
+        challenge.setProgressList(progressList);
+        
+        Challenge savedChallenge = challengeRepository.save(challenge);
+        return mapToChallengeResponse(savedChallenge);
     }
 
     public Challenge getChallenge(Long id) {
@@ -71,5 +85,17 @@ public class ChallengeService {
 
     public List<Challenge> getActiveChallengesByUser(Long userId) {
         return challengeRepository.findByUserIdAndFinishedFalse(userId);
+    }
+
+    private ChallengeResponse mapToChallengeResponse(Challenge challenge) {
+        return ChallengeResponse.builder()
+                .id(challenge.getId())
+                .title(challenge.getTitle())
+                .description(challenge.getDescription())
+                .type(challenge.getType())
+                .durationInDays(challenge.getDurationInDays())
+                .startDate(challenge.getStartDate())
+                .finished(challenge.isFinished())
+                .build();
     }
 }
