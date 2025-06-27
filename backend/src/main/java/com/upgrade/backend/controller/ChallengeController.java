@@ -33,9 +33,10 @@ public class ChallengeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Challenge> getChallenge(@PathVariable Long id) {
+    public ResponseEntity<ChallengeResponse> getChallenge(@PathVariable Long id) {
         Challenge challenge = challengeService.getChallenge(id);
-        return ResponseEntity.ok(challenge);
+        ChallengeResponse response = challengeService.mapToChallengeResponse(challenge);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")

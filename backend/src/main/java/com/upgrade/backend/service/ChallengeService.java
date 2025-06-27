@@ -1,13 +1,16 @@
 package com.upgrade.backend.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.upgrade.backend.dto.ChallengeRequest;
 import com.upgrade.backend.dto.ChallengeResponse;
+import com.upgrade.backend.dto.DailyProgressResponse;
 import com.upgrade.backend.model.Challenge;
 import com.upgrade.backend.model.DailyProgress;
 import com.upgrade.backend.model.User;
@@ -87,7 +90,11 @@ public class ChallengeService {
         return challengeRepository.findByUserIdAndFinishedFalse(userId);
     }
 
-    private ChallengeResponse mapToChallengeResponse(Challenge challenge) {
+    public ChallengeResponse mapToChallengeResponse(Challenge challenge) {
+        List<DailyProgressResponse> progressResponses = challenge.getProgressList().stream()
+                .map(this::mapToDailyProgressResponse)
+                .collect(Collectors.toList());
+        
         return ChallengeResponse.builder()
                 .id(challenge.getId())
                 .title(challenge.getTitle())
@@ -96,6 +103,27 @@ public class ChallengeService {
                 .durationInDays(challenge.getDurationInDays())
                 .startDate(challenge.getStartDate())
                 .finished(challenge.isFinished())
+                .progressList(progressResponses)
+                .build();
+    }
+    
+    private DailyProgressResponse mapToDailyProgressResponse(DailyProgress progress) {
+        String status;
+        LocalDate today = LocalDate.now();
+        
+        if (progress.isCompleted()) {
+            status = "COMPLETADO";
+        } else if (progress.getDate().isBefore(today)) {
+            status = "VENCIDO";
+        } else {
+            status = "PENDENTE";
+        }
+        
+        return DailyProgressResponse.builder()
+                .id(progress.getId())
+                .date(progress.getDate())
+                .completed(progress.isCompleted())
+                .status(status)
                 .build();
     }
 }
