@@ -8,5 +8,4 @@ import com.upgrade.backend.model.Challenge;
 
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     List<Challenge> findByUserIdAndFinishedFalse(Long userId);
-    List<Challenge> findByUserIdAndFinishedTrue(Long userId);
 }
