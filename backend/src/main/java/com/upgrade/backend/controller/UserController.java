@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.upgrade.backend.dto.DailyProgressHistoryResponse;
+import com.upgrade.backend.dto.DailyProgressResponse;
 import com.upgrade.backend.dto.UserStatsResponse;
 import com.upgrade.backend.model.User;
 import com.upgrade.backend.service.UserService;
@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/progress-history")
-    public ResponseEntity<List<DailyProgressHistoryResponse>> getUserProgressHistory(@PathVariable Long id) {
+    public ResponseEntity<List<DailyProgressResponse>> getUserProgressHistory(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserProgressHistory(id));
     }
 }

@@ -11,8 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DailyProgressHistoryResponse {
+public class DailyProgressResponse {
+    private Long id;
     private LocalDate date;
-    private String status; // "COMPLETADO" ou "VENCIDO"
-    private Long challengeId;
+    private boolean completed;
+    private String status;
 }

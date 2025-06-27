@@ -7,7 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.upgrade.backend.dto.DailyProgressHistoryResponse;
+import com.upgrade.backend.dto.DailyProgressResponse;
 import com.upgrade.backend.dto.UserStatsResponse;
 import com.upgrade.backend.model.DailyProgress;
 import com.upgrade.backend.model.User;
@@ -45,8 +45,8 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<DailyProgressHistoryResponse> getUserProgressHistory(Long userId) {
-        getUser(userId); // Verifica se o usuário existe
+    public List<DailyProgressResponse> getUserProgressHistory(Long userId) {
+        getUser(userId);
         
         List<DailyProgress> progressList = dailyProgressRepository.findUserProgressHistory(userId);
         
@@ -55,13 +55,14 @@ public class UserService {
                 .collect(Collectors.toList());
     }
     
-    private DailyProgressHistoryResponse mapToHistoryResponse(DailyProgress progress) {
+    private DailyProgressResponse mapToHistoryResponse(DailyProgress progress) {
         String status = progress.isCompleted() ? "COMPLETADO" : "VENCIDO";
         
-        return DailyProgressHistoryResponse.builder()
+        return DailyProgressResponse.builder()
+                .id(progress.getId())
                 .date(progress.getDate())
+                .completed(progress.isCompleted())
                 .status(status)
-                .challengeId(progress.getChallenge().getId())
                 .build();
     }
 }
